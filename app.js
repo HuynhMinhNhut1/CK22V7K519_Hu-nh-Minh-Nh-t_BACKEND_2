@@ -2,18 +2,16 @@ const contactsRouter = require("./app/routes/contact.route");
 const express = require("express");
 const cors = require("cors");
 const app = express();
+const ApiError = require("./app/api-error");
 
 app.use(cors());
 app.use(express.json());
-app.use("/api/contacts", contactsRouter);
 
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to contact book application." });
 });
-module.exports = app;
-const ApiError = require("./app/api-error");
-
 app.use("/api/contacts", contactsRouter);
+
 
 // Xử lý khi không tìm thấy đường dẫn
 app.use((req, res, next) => {
@@ -23,7 +21,7 @@ app.use((req, res, next) => {
 });
 
 // Định nghĩa middleware xử lý lỗi ở cuối cùng, sau các app.use() và các route
-app.use((error, req, res) => {
+app.use((error, req, res, next) => {
   // Middleware xử lý lỗi tập trung.
   // Trong đoạn mã xử lý của các route, gọi next(error) sẽ chuyển sang middleware xử lý lỗi này
   return res.status(error.statusCode || 500).json({
@@ -31,3 +29,4 @@ app.use((error, req, res) => {
   });
 });
 
+module.exports = app;
